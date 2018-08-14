@@ -8,7 +8,7 @@ PathBase <- "C:/Users/tuananhle/Documents/NA/Thesis"
 PathRaw <- paste(PathBase, "/Raw Data", sep = "")
 PathProcessed <- paste(PathBase, "/Processed Data", sep = "")
 PathOut <- paste(PathBase, "/Output", sep = "")
-PathCode <- paste(PathBase, "/code", sep = "")
+PathCode <- paste(PathBase, "/thesis-code", sep = "")
 #----------------------------------#
 
 # CONSTRUCT VARIABLES FROM ANOTHER R SCRIPT

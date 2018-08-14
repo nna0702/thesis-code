@@ -60,37 +60,82 @@ for (i in rhs){
   moral[[paste(i, "2015", sep = "_")]] <- ifelse(moral$wave == 2011, 0, moral[[i]])
 }
 
-# List of RHS variables used in the unrestricted model
-unrestricted <- setdiff(names(moral), "wave")
+# Data for unrestricted model
+unrestricted <- setdiff(names(moral), "wave")            ## RHS variables in the unrestricted model
+unrestricted <- moral[, names(moral) %in% unrestricted]
 
-# List of RHS variables used in the restricted model
+# Data for restricted model
 restricted <- union(setdiff(setdiff(names(moral), "wave"), 
-                            names(moral)[grep("_2015",names(moral))]), "wave_2015")
+                            names(moral)[grep("_2015",names(moral))]), "wave_2015") ## RHS variables in restricted model
+restricted <- moral[, names(moral) %in% restricted]
 #----------------------------------#
 
 # LINEAR REGRESSION MODEL
 
 # Restricted model
-linregr <- lm(preventive ~ ., data = moral[, names(moral) %in% restricted])
+linregr <- lm(preventive ~ ., data = restricted)
 summary(linregr)
-linregr <- tidy(linregr)
-write.csv(linregr, "Linear regression restricted model.csv")
+write.csv(tidy(linregr), "Linear regression restricted model.csv")
 
 # Unrestricted model
-linregu <- lm(preventive ~ ., data = moral[, names(moral) %in% unrestricted])
+linregu <- lm(preventive ~ ., data = unrestricted)
 summary(linregu)
-linregu <- tidy(linregu)
-write.csv(linregu, "Linear regression unrestricted model.csv")
+write.csv(tidy(linregu), "Linear regression unrestricted model.csv")
 #----------------------------------#
 
-# LOGISTC REGRESSION MODEL
+# LOGISTC REGRESSION RESTRICTED MODEL
 
-# Restricted model
-logregr <- glm(preventive ~ ., data = moral[, names(moral) %in% restricted])
+# Execute the model
+logregr <- glm(preventive ~ ., family = "binomial", data = restricted)
 summary(logregr)
-logregr <- tidy(logregr)
-write.csv(linregr, "Logistic regression restricted model.csv")
+write.csv(tidy(logregr), "Logistic regression restricted model.csv")
 
-# Marginal effects of restricted model
+# Odds ratio
+or <- round(exp(coef(logregr)), digits = 3)
+write.csv(or, "Odds ratio of restricted model.csv")
+
+# Average marginal effect
+ame <- logitmfx(preventive ~., atmean = FALSE, data = restricted)
+ame
+
+# Marginal effect at means
+mem <- logitmfx(preventive ~., atmean = TRUE, data = restricted)
+mem
+
+# Prediction
+prop <- NROW(restricted[restricted$preventive == 1, ]) / NROW(restricted) ## Set the threshold
+predict <- predict.glm(logregr, type = "response")
+restricted[ , "predict"] <- predict
+restricted$predict <- ifelse(restricted$predict >= prop, 1, 0)
+contingency <- with(restricted, table(predict, preventive, dnn = c("Predicted", "Actual")))
+write.csv(contingency, "Contingency predicted vs actual of restricted model.csv")
+#----------------------------------#
+
+# LOGISTC REGRESSION UNRESTRICTED MODEL
+
+# Execute the model
+logregu <- glm(preventive ~ ., family = "binomial", data = unrestricted)
+summary(logregu)
+write.csv(tidy(logregu), "Logistic regression unrestricted model.csv")
+
+# Odds ratio
+or <- round(exp(coef(logregu)), digits = 3)
+write.csv(or, "Odds ratio of unrestricted model.csv")
+
+# Average marginal effect
+ame <- logitmfx(preventive ~., atmean = FALSE, data = unrestricted)
+ame
+
+# Marginal effect at means
+mem <- logitmfx(preventive ~., atmean = TRUE, data = unrestricted)
+mem
+
+# Prediction
+prop <- NROW(unrestricted[unrestricted$preventive == 1, ]) / NROW(unrestricted) ## Set the threshold
+predict <- predict.glm(logregu, type = "response")
+unrestricted[ , "predict"] <- predict
+unrestricted$predict <- ifelse(unrestricted$predict >= prop, 1, 0)
+contingency <- with(unrestricted, table(predict, preventive, dnn = c("Predicted", "Actual")))
+write.csv(contingency, "Contingency predicted vs actual of unrestricted model.csv")
 
 

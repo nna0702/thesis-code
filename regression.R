@@ -57,7 +57,7 @@ rhs <- setdiff(names(moral), c("preventive", "wave", "wave_2015"))
 
 # Create interaction variables to account for observations in 2015 only (in unrestricted model)
 for (i in rhs){
-  moral[[paste(i, "2015", sep = "_")]] <- with(moral, interaction(gender,wave_2015))
+  moral[[paste(i, "2015", sep = "_")]] <- ifelse(moral$wave == 2011, 0, moral[[i]])
 }
 
 # List of RHS variables used in the unrestricted model

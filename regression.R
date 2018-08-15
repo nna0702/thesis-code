@@ -49,15 +49,20 @@ moral <- subset(moral, select = - c(hhnetinc_pc, status, idind, uebmi, urbmi, st
 
 # Create dummy variales for 2015
 moral$wave_2015 <- ifelse(moral$wave == 2015, 1, 0)
-moral$wave_2015 <- factor(moral$wave_2015,
-                          labels = c("Wave 2011", "Wave 2015"))
+# moral$wave_2015 <- factor(moral$wave_2015,
+#                         labels = c("Wave 2011", "Wave 2015"))
 
 # Create a list of variables on RHS
 rhs <- setdiff(names(moral), c("preventive", "wave", "wave_2015"))
 
 # Create interaction variables to account for observations in 2015 only (in unrestricted model)
-for (i in rhs){
+
+for (i in continuous){
   moral[[paste(i, "2015", sep = "_")]] <- ifelse(moral$wave == 2011, 0, moral[[i]])
+}
+
+for (i in discrete){
+  moral[[paste(i, "2015", sep = "_")]] <- ifelse()
 }
 
 # Data for unrestricted model
@@ -68,6 +73,8 @@ unrestricted <- moral[, names(moral) %in% unrestricted]
 restricted <- union(setdiff(setdiff(names(moral), "wave"), 
                             names(moral)[grep("_2015",names(moral))]), "wave_2015") ## RHS variables in restricted model
 restricted <- moral[, names(moral) %in% restricted]
+
+####### TODO: Create factor variables with proper labels
 #----------------------------------#
 
 # LINEAR REGRESSION MODEL

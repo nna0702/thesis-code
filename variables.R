@@ -133,22 +133,22 @@ df$diet <- ifelse(df$diet < 3, 1, 0)                         ## Healthy diet not
 df$diet <- factor(df$diet, 
                   labels = c("Healthy", "Unhealthy"))
 
-# # BMI
-# df$bmi <- df$weight / (df$height/100)^2
-# 
-# # Chronic diseases
-# 
-# ## Diabetes
-# names(df)[names(df) == "u24a"] <- "diabetes"
-# df$diabetes[df$diabetes == 9] <- NA
-# df$diabetes <- factor(df$diabetes,
-#                       labels = c("No diabetes", "Has diabetes"))
-# 
-# ## High blood pressure
-# names(df)[names(df) == "u22"] <- "pressure"
-# df$pressure[df$pressure == 9] <- NA
-# df$pressure <- factor(df$pressure,
-#                       labels = c("Normal blood pressure", "High blood pressure"))
+# BMI
+df$bmi <- df$weight / (df$height/100)^2
+
+# Chronic diseases
+
+## Diabetes
+names(df)[names(df) == "u24a"] <- "diabetes"
+df$diabetes[df$diabetes == 9] <- NA
+df$diabetes <- factor(df$diabetes,
+                      labels = c("No diabetes", "Has diabetes"))
+
+## High blood pressure
+names(df)[names(df) == "u22"] <- "pressure"
+df$pressure[df$pressure == 9] <- NA
+df$pressure <- factor(df$pressure,
+                      labels = c("Normal blood pressure", "High blood pressure"))
 #----------------------------------#
 
 # DEALING WITH MISSING VALUES #

@@ -82,8 +82,8 @@ df$province <- relevel(df$province, "Chongqing")
 # Rural/ urban status: Rural as the reference group 
 df$urban <- factor(df$urban,
                    labels = c("Rural", "Urban"))
-
 #----------------------------------#
+
 # CONSTRUCT OTHER EXPLANATORY VARIABLES - SOCIO-ECONOMIC & DEMOGRAPHIC VARIABLES #
 
 # Gender: Male as the reference group
@@ -115,6 +115,7 @@ df$hhinc[df$hhinc <= 0] <- NA               ## Treat non-positive values as miss
 df$hhnetinc_pc <- df$hhinc / df$hhsize
 df$loginc <- log(df$hhnetinc_pc)
 #----------------------------------#
+
 # CONSTRUCT OTHER EXPLANATORY VARIABLES - HEALTH VARIABLES #
 
 # Health attitude
@@ -156,7 +157,7 @@ df$pressure <- factor(df$pressure,
 # Create a list of relevant variables
 variables <- c("idind","uebmi", "urbmi", "rncms", "preventive", 
                "gender", "age", "ethnicity","educ", "employment", "hhnetinc_pc", "loginc",
-               "exercise", "diet", "status", "urban", "province", "wave")
+               "exercise", "diet", "status", "urban", "province", "wave", "bmi", "diabetes", "pressure")
 
 # Remove observations with at least one missing values in the chosen variables
 na_tab <- sapply(df[, variables], function (x) sum(is.na(x)))

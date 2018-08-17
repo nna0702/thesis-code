@@ -84,8 +84,29 @@ stopifnot(length(unique(data[data$wave == 2015, ]$idind)) == NROW(data[data$wave
 #----------------------------------#
 
 # Retain observations which appear in both 2011 and 2015
-#data <- data[duplicated(data$idind) | duplicated(data$idind, fromLast = TRUE),]
-#stopifnot(NROW(data[data$wave == 2011, ]) == NROW(data[data$wave == 2015, ]))  # Cross check
+data <- data[duplicated(data$idind) | duplicated(data$idind, fromLast = TRUE),]
+stopifnot(NROW(data[data$wave == 2011, ]) == NROW(data[data$wave == 2015, ]))  # Cross check
+#----------------------------------#
+
+# Fill health-related values in 2015 with the values in 2011. Assume that these have not changed
+
+## Subset the data by survey wave
+data11 <- data[data$wave == 2011, ]            ## Extract the data in wave 2011
+data15 <- data[data$wave == 2015, ]            ## Extract the data in wave 2015
+
+## Fill up the values in 2015
+match <- match(data11$idind, data15$idind)
+data15$weight[match] <- data11$weight
+data15$height[match] <- data11$height
+data15$u22[match] <- data11$u22
+data15$u24a[match] <- data11$u24a
+
+## Combine the subsets
+data <- rbind(data11, data15) 
+
+## Double check uniqueness in each wave
+stopifnot(length(unique(data[data$wave == 2011, ]$idind)) == NROW(data[data$wave == 2011, ]))
+stopifnot(length(unique(data[data$wave == 2015, ]$idind)) == NROW(data[data$wave == 2015, ])) 
 #----------------------------------#
 
 # Save the dataset 

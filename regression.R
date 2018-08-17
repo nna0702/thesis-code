@@ -49,11 +49,12 @@ moral <- subset(moral, select = - c(hhnetinc_pc, status, idind, uebmi, urbmi, st
 
 # Create dummy variales for 2015
 moral$wave_2015 <- ifelse(moral$wave == 2015, 1, 0)
-# moral$wave_2015 <- factor(moral$wave_2015,
-#                         labels = c("Wave 2011", "Wave 2015"))
+moral$wave_2015 <- factor(moral$wave_2015,
+                        labels = c("Wave 2011", "Wave 2015"))
 
 # Create a list of variables on RHS
-rhs <- setdiff(names(moral), c("preventive", "wave", "wave_2015"))
+continuous <- c("loginc", "age", "bmi") ## Continuous variables
+discrete <- setdiff(names(moral), union(continuous, c("preventive", "wave", "wave_2015"))) ## Discrete variables
 
 # Create interaction variables to account for observations in 2015 only (in unrestricted model)
 
@@ -62,8 +63,24 @@ for (i in continuous){
 }
 
 for (i in discrete){
-  moral[[paste(i, "2015", sep = "_")]] <- ifelse()
+  moral[[paste(i, "2015", sep = "_")]] <- interaction(moral[[i]], moral$wave_2015)
 }
+
+# Relabel factors
+levels(moral$gender_2015) <- c(rep("Male.Wave 2015",3), "Female.Wave 2015")
+levels(moral$ethnicity_2015) <- c(rep("Minority.Wave 2015", 3), "Han.Wave 2015")
+levels(moral$educ_2015) <- c(rep("No qualification.Wave 2015", 6), "Primary school.Wave 2015", "Middle school.Wave 2015",
+                             "Vocational school.Wave 2015", "University degree and higher.Wave 2015")
+levels(moral$employment_2015) <- c(rep("Unemployed.Wave 2015", 3), "Employed.Wave 2015")
+levels(moral$diet_2015) <- c(rep("Healthy.Wave 2015", 3), "Unhealthy.Wave 2015")
+levels(moral$exercise_2015) <- c(rep("Active.Wave 2015", 3), "Inactive.Wave 2015")
+levels(moral$urban_2015) <- c(rep("Rural.Wave 2015", 3), "Urban.Wave 2015")
+levels(moral$province_2015) <- c(rep("Chongqing.Wave 2015", 13), "Beijing.Wave 2015", "Liaoning.Wave 2015",
+                                 "Heilongjiang.Wave 2015", "Shanghai.Wave 2015", "Jiangsu.Wave 2015", "Shandong.Wave 2015",
+                                 "Henan.Wave 2015", "Hubei.Wave 2015", "Hunan.Wave 2015", "Guangxi.Wave 2015",
+                                 "Guizhou.Wave 2015")
+levels(moral$diabetes_2015) <- c(rep("No diabetes.Wave 2015", 3), "Has diabetes.Wave 2015")
+levels(moral$pressure_2015) <- c(rep("Normal blood pressure.Wave 2015", 3), "High blood pressure.Wave 2015")
 
 # Data for unrestricted model
 unrestricted <- setdiff(names(moral), "wave")            ## RHS variables in the unrestricted model
@@ -73,11 +90,9 @@ unrestricted <- moral[, names(moral) %in% unrestricted]
 restricted <- union(setdiff(setdiff(names(moral), "wave"), 
                             names(moral)[grep("_2015",names(moral))]), "wave_2015") ## RHS variables in restricted model
 restricted <- moral[, names(moral) %in% restricted]
-
-####### TODO: Create factor variables with proper labels
 #----------------------------------#
 
-# LINEAR REGRESSION MODEL
+# LINEAR REGRESSION MODEL #
 
 # Restricted model
 linregr <- lm(preventive ~ ., data = restricted)
@@ -88,9 +103,13 @@ write.csv(tidy(linregr), "Linear regression restricted model.csv")
 linregu <- lm(preventive ~ ., data = unrestricted)
 summary(linregu)
 write.csv(tidy(linregu), "Linear regression unrestricted model.csv")
+
+# Likelihood ratio test
+lrtest(linregr, linregu)
+
 #----------------------------------#
 
-# LOGISTC REGRESSION RESTRICTED MODEL
+# LOGISTC REGRESSION RESTRICTED MODEL #
 
 # Execute the model
 logregr <- glm(preventive ~ ., family = "binomial", data = restricted)
@@ -102,12 +121,12 @@ or <- round(exp(coef(logregr)), digits = 3)
 write.csv(or, "Odds ratio of restricted model.csv")
 
 # Average marginal effect
-ame <- logitmfx(preventive ~., atmean = FALSE, data = restricted)
-ame
+amer <- logitmfx(preventive ~., atmean = FALSE, data = restricted)
+amer
 
 # Marginal effect at means
-mem <- logitmfx(preventive ~., atmean = TRUE, data = restricted)
-mem
+memr <- logitmfx(preventive ~., atmean = TRUE, data = restricted)
+memr
 
 # Prediction
 prop <- NROW(restricted[restricted$preventive == 1, ]) / NROW(restricted) ## Set the threshold
@@ -118,7 +137,7 @@ contingency <- with(restricted, table(predict, preventive, dnn = c("Predicted", 
 write.csv(contingency, "Contingency predicted vs actual of restricted model.csv")
 #----------------------------------#
 
-# LOGISTC REGRESSION UNRESTRICTED MODEL
+# LOGISTC REGRESSION UNRESTRICTED MODEL #
 
 # Execute the model
 logregu <- glm(preventive ~ ., family = "binomial", data = unrestricted)
@@ -130,12 +149,12 @@ or <- round(exp(coef(logregu)), digits = 3)
 write.csv(or, "Odds ratio of unrestricted model.csv")
 
 # Average marginal effect
-ame <- logitmfx(preventive ~., atmean = FALSE, data = unrestricted)
-ame
+ameu <- logitmfx(preventive ~., atmean = FALSE, data = unrestricted)
+ameu
 
 # Marginal effect at means
-mem <- logitmfx(preventive ~., atmean = TRUE, data = unrestricted)
-mem
+memu <- logitmfx(preventive ~., atmean = TRUE, data = unrestricted)
+memu
 
 # Prediction
 prop <- NROW(unrestricted[unrestricted$preventive == 1, ]) / NROW(unrestricted) ## Set the threshold
@@ -144,5 +163,7 @@ unrestricted[ , "predict"] <- predict
 unrestricted$predict <- ifelse(unrestricted$predict >= prop, 1, 0)
 contingency <- with(unrestricted, table(predict, preventive, dnn = c("Predicted", "Actual")))
 write.csv(contingency, "Contingency predicted vs actual of unrestricted model.csv")
+#----------------------------------#
 
-
+# LIKELIHOOD RATIO TEST FOR LOGREG MODELS #
+lrtest(logregr, logregu)

@@ -183,7 +183,7 @@ summary <- rbind(summary, age, bmi, income)
 write.csv(summary, "Summary statistics.csv")
 #----------------------------------#
 
-# EXPLORE THE DISTRIBUTION OF HOUSEHOLD NET INCOME PER CAPITA AND AGE
+# EXPLORE THE DISTRIBUTION OF HOUSEHOLD NET INCOME PER CAPITA AND AGE #
 
 # Plot the distirbution of hhnetinc_pc
 dist_inc <- ggplot(moral, aes(x = hhnetinc_pc, fill = wave)) + 
@@ -224,12 +224,28 @@ dist_age <- dist_age + theme(panel.background = element_blank(),
 ggsave("Distribution of age.png") 
 
 # Calculate skewness, kurtosis, mean and median of the distribution of the two income-related variables and age
-skewness <- sapply(moral[, c("hhnetinc_pc", "loginc", "age")], function(x) round(skewness(x), digits = 4))
-kurtosis <- sapply(moral[, c("hhnetinc_pc", "loginc", "age")], function(x) round(kurtosis(x), digits = 4))
-mean <- sapply(moral[, c("hhnetinc_pc", "loginc", "age")], function(x) round(mean(x), digits = 4))
-median <- sapply(moral[, c("hhnetinc_pc", "loginc", "age")], function(x) round(median(x), digits = 4))
+
+## Divide datatsets into two subsets by wave
+moral11 <- moral[moral$wave == 2011, ]
+moral15 <- moral[moral$wave == 2015, ]
+
+## Statistics in 2011
+skewness <- sapply(moral11[, c("hhnetinc_pc", "loginc", "age")], function(x) round(skewness(x), digits = 4))
+kurtosis <- sapply(moral11[, c("hhnetinc_pc", "loginc", "age")], function(x) round(kurtosis(x), digits = 4))
+mean <- sapply(moral11[, c("hhnetinc_pc", "loginc", "age")], function(x) round(mean(x), digits = 4))
+median <- sapply(moral11[, c("hhnetinc_pc", "loginc", "age")], function(x) round(median(x), digits = 4))
 statistics <- rbind(mean, median, skewness, kurtosis)
 statistics <- as.data.frame.matrix(statistics)
 colnames(statistics) <- c("Household net income per capita", "Log household net income per capita", "Age (in years)")
-write.csv(statistics, "Statistics of income variables and age.csv")
+write.csv(statistics, "Statistics of income variables and age 2011.csv")
+
+## Statistics in 2015
+skewness <- sapply(moral15[, c("hhnetinc_pc", "loginc", "age")], function(x) round(skewness(x), digits = 4))
+kurtosis <- sapply(moral15[, c("hhnetinc_pc", "loginc", "age")], function(x) round(kurtosis(x), digits = 4))
+mean <- sapply(moral15[, c("hhnetinc_pc", "loginc", "age")], function(x) round(mean(x), digits = 4))
+median <- sapply(moral15[, c("hhnetinc_pc", "loginc", "age")], function(x) round(median(x), digits = 4))
+statistics <- rbind(mean, median, skewness, kurtosis)
+statistics <- as.data.frame.matrix(statistics)
+colnames(statistics) <- c("Household net income per capita", "Log household net income per capita", "Age (in years)")
+write.csv(statistics, "Statistics of income variables and age 2015.csv")
 #----------------------------------#

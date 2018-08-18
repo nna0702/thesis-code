@@ -167,3 +167,5 @@ write.csv(contingency, "Contingency predicted vs actual of unrestricted model.cs
 
 # LIKELIHOOD RATIO TEST FOR LOGREG MODELS #
 lrtest(logregr, logregu)
+
+###### TODO: Add excel files with Latex command of the results

@@ -37,9 +37,10 @@ library(scales)
 
 # Population breakdown by insurance status
 
-sample$status <- relevel(sample$status, "Uninsured")    ## Reorder the levels of the factor variable
-population <- ggplot() + 
-  geom_bar(aes(x = status, fill = wave), data = sample, stat="count", width = 0.5, position_dodge()) +
+sample$wave <- factor(sample$wave, levels = c("2011", "2015")) ## Turn wave variable into a factor variable
+sample$status <- relevel(sample$status, "Uninsured")           ## Reorder the levels of the factor variable
+population <- ggplot(sample, aes(x = status, fill = wave)) + 
+  geom_bar(width = 0.5, position = "dodge") +
   theme(panel.background = element_blank(),
         panel.grid = element_blank(),
         panel.grid.major.y = element_line(size=.1, color="lightgrey"),

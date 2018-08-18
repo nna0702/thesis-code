@@ -93,14 +93,14 @@ ggsave("status by pct.png")
 # DESCRIPTIVE STATISTICS OF THE SAMPLE AND SUB-SAMPLES #
 
 # Create a list of samples
-dflist <- list(sample, sample[sample$status == "Uninsured", ], sample[sample$status == "RNCMS", ],
-               sample[sample$status == "UEBMI", ], sample[sample$status == "URBMI", ])
+dflist <- list(moral, moral[moral$wave == "2011", ], moral[moral$wave == "2015", ])
 # 
 # Remove variable "status"
 sample <- subset(sample, select = - status)
 
 # Create a list of factor variables
-factors <- setdiff(variables, c("hhnetinc_pc", "loginc", "rncms", "uebmi", "urbmi", "preventive", "status", "age", "bmi"))  
+factors <- setdiff(variables, c("hhnetinc_pc", "loginc", "rncms", "uebmi", "urbmi", "preventive", "status", 
+                                "idind", "age", "bmi", "wave"))  
 
 # Summary statistics of factor variables for whole sample
 mean_all <- list()
@@ -112,48 +112,28 @@ mean_all <- as.data.frame(mean_all)
 mean_all[[2]] <- round(mean_all[[2]]/NROW(dflist[[1]]), digits = 2)
 names(mean_all) <- c("Variable", "All")
 
-# Summary statistics of factor variables for sample of uninsured
-mean_uninsured <- list()
+# Summary statistics of factor variables for 2011 sample
+mean_2011 <- list()
 for (i in 1:length(factors)) {
-  mean_uninsured[[i]] <- as.data.frame(count(dflist[[2]][[factors[[i]]]]))
+  mean_2011[[i]] <- as.data.frame(count(dflist[[2]][[factors[[i]]]]))
 }
-mean_uninsured <- do.call(rbind, mean_uninsured)
-mean_uninsured <- as.data.frame(mean_uninsured)
-mean_uninsured[[2]] <- round(mean_uninsured[[2]]/NROW(dflist[[2]]), digits = 2)
-names(mean_uninsured) <- c("Variable", "Uninsured")
+mean_2011 <- do.call(rbind, mean_2011)
+mean_2011 <- as.data.frame(mean_2011)
+mean_2011[[2]] <- round(mean_2011[[2]]/NROW(dflist[[2]]), digits = 2)
+names(mean_2011) <- c("Variable", "2011")
 
-# Summary statistics of factor variables for sample of RNCMS
-mean_RNCMS <- list()
+# Summary statistics of factor variables for 2011 sample
+mean_2015 <- list()
 for (i in 1:length(factors)) {
-  mean_RNCMS[[i]] <- as.data.frame(count(dflist[[3]][[factors[[i]]]]))
+  mean_2015[[i]] <- as.data.frame(count(dflist[[3]][[factors[[i]]]]))
 }
-mean_RNCMS <- do.call(rbind, mean_RNCMS)
-mean_RNCMS <- as.data.frame(mean_RNCMS)
-mean_RNCMS[[2]] <- round(mean_RNCMS[[2]]/NROW(dflist[[3]]), digits = 2)
-names(mean_RNCMS) <- c("Variable", "RNCMS")
-
-# Summary statistics of factor variables for sample of UEBMI
-mean_UEBMI <- list()
-for (i in 1:length(factors)) {
-  mean_UEBMI[[i]] <- as.data.frame(count(dflist[[4]][[factors[[i]]]]))
-}
-mean_UEBMI <- do.call(rbind, mean_UEBMI)
-mean_UEBMI <- as.data.frame(mean_UEBMI)
-mean_UEBMI[[2]] <- round(mean_UEBMI[[2]]/NROW(dflist[[4]]), digits = 2)
-names(mean_UEBMI) <- c("Variable", "UEBMI")
-
-# Summary statistics of factor variables for sample of URBMI
-mean_URBMI <- list()
-for (i in 1:length(factors)) {
-  mean_URBMI[[i]] <- as.data.frame(count(dflist[[5]][[factors[[i]]]]))
-}
-mean_URBMI <- do.call(rbind, mean_URBMI)
-mean_URBMI <- as.data.frame(mean_URBMI)
-mean_URBMI[[2]] <- round(mean_URBMI[[2]]/NROW(dflist[[5]]), digits = 2)
-names(mean_URBMI) <- c("Variable", "URBMI")
+mean_2015 <- do.call(rbind, mean_2015)
+mean_2015 <- as.data.frame(mean_2015)
+mean_2015[[2]] <- round(mean_2015[[2]]/NROW(dflist[[3]]), digits = 2)
+names(mean_2015) <- c("Variable", "2015")
 
 # Merge lists
-mean_list <- list(mean_all, mean_uninsured, mean_RNCMS, mean_UEBMI, mean_URBMI)
+mean_list <- list(mean_all, mean_2011, mean_2015)
 summary <- Reduce(function(x,y){
   join(x, y)
 }, mean_list)
@@ -166,11 +146,9 @@ for (i in 1:length(dflist)) {
   age[[i]] <- data.frame(Variable = "Age (in years)", 
                          All = round(mean(dflist[[i]]$age), digits = 0))
 }
-names(age[[2]])[[2]] <- "Uninsured"    ## Change the column headings
-names(age[[3]])[[2]] <- "RNCMS"
-names(age[[4]])[[2]] <- "UEBMI"
-names(age[[5]])[[2]] <- "URBMI"
-age <- Reduce(function(x,y){           ## Compile the summary statistics across samples
+names(age[[2]])[[2]] <- "2011"    ## Change the column headings
+names(age[[3]])[[2]] <- "2015"
+age <- Reduce(function(x,y){      ## Compile the summary statistics across samples
   join(x, y)
 }, age)
 
@@ -180,11 +158,9 @@ for (i in 1:length(dflist)) {
   bmi[[i]] <- data.frame(Variable = "BMI", 
                          All = round(mean(dflist[[i]]$bmi), digits = 1))
 }
-names(bmi[[2]])[[2]] <- "Uninsured"    ## Change the column headings
-names(bmi[[3]])[[2]] <- "RNCMS"
-names(bmi[[4]])[[2]] <- "UEBMI"
-names(bmi[[5]])[[2]] <- "URBMI"
-bmi <- Reduce(function(x,y){           ## Compile the summary statistics across samples
+names(bmi[[2]])[[2]] <- "2011"    ## Change the column headings
+names(bmi[[3]])[[2]] <- "2015"
+bmi <- Reduce(function(x,y){      ## Compile the summary statistics across samples
   join(x, y)
 }, bmi)
 
@@ -194,27 +170,17 @@ for (i in 1:length(dflist)) {
   income[[i]] <- data.frame(Variable = "Annual household income per capita (in RMB)", 
                             All = round(mean(dflist[[i]]$hhnetinc_pc), digits = 0))
 }
-names(income[[2]])[[2]] <- "Uninsured"    ## Change the column headings
-names(income[[3]])[[2]] <- "RNCMS"
-names(income[[4]])[[2]] <- "UEBMI"
-names(income[[5]])[[2]] <- "URBMI"
-income <- Reduce(function(x,y){           ## Compile the summary statistics across samples
+names(income[[2]])[[2]] <- "2011"    ## Change the column headings
+names(income[[3]])[[2]] <- "2015"
+income <- Reduce(function(x,y){      ## Compile the summary statistics across samples
   join(x, y)
 }, income)
 
 ## Combine summary statistics of factor and non-factor variables
 summary <- rbind(summary, age, bmi, income)
 
-## Format the sizes of the sample from the frequency table created earlier
-status_tab <- as.data.frame(t(as.matrix(status_tab)))  ## Turn into a dataframe
-status_tab$All <- rowSums(status_tab)                  ## Create a column for whole sample size
-status_tab$Variable <- "Sample size"                   ## Create the label for the sample size
-status_tab <- status_tab[, c(6, 5, 1, 2, 3, 4)]        ## Reorder columns to be the same as summary table
-summary <- rbind(status_tab, summary)                  ## Append sample size into the summary table
-
 ## Save the summary table
 write.csv(summary, "Summary statistics.csv")
-
 #----------------------------------#
 
 # EXPLORE THE DISTRIBUTION OF HOUSEHOLD NET INCOME PER CAPITA AND AGE

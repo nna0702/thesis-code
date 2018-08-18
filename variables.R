@@ -23,6 +23,9 @@ df <- subset(df, !is.na(df$m1))
 
 # Only pick those aged above 18
 df <- subset(df, df$age >= 18)
+
+# Turn wave variable into a factor variable
+df$wave <- factor(df$wave, levels = c("2011", "2015"))
 #----------------------------------#
 
 # SELECT SAMPLE BY INSURANCE PLANS #

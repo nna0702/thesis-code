@@ -187,7 +187,7 @@ write.csv(summary, "Summary statistics.csv")
 
 # Plot the distirbution of hhnetinc_pc
 dist_inc <- ggplot(moral, aes(x = hhnetinc_pc, fill = wave)) + 
-  geom_histogram(bins = 50, position = "identity", alpha = 0.5) + xlim(0, 150000) +
+  geom_histogram(bins = 50, position = "identity", alpha = 0.5) + xlim(0, 150000) + ## 21 extreme observations are removed
   labs(x = "Income level", y = "Number of respondents") 
 dist_inc <- dist_inc + theme(panel.background = element_blank(),
                              panel.grid = element_blank(),

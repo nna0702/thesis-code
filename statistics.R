@@ -33,44 +33,55 @@ library(plyr)
 library(scales)
 #----------------------------------#
 
-# USE OF PREVENTIVE CARE BY INSURANCE STATUS
+# PLOT GRAPHS #
 
-# Plot the graph (absolute numbers)
+# Population breakdown by insurance status
+
 sample$status <- relevel(sample$status, "Uninsured")    ## Reorder the levels of the factor variable
-status_plot <- ggplot(sample, aes(x = status, y = preventive)) + 
-  geom_bar(stat="identity", fill= "#56B4E9", width = 0.5) +
+population <- ggplot() + 
+  geom_bar(aes(x = status, fill = wave), data = sample, stat="count", width = 0.5, position_dodge()) +
   theme(panel.background = element_blank(),
         panel.grid = element_blank(),
         panel.grid.major.y = element_line(size=.1, color="lightgrey"),
         axis.ticks = element_blank()) +
-  labs(x = "", y = "")
-ggsave("status.png")
+  labs(x = "", y = "", fill = "Wave")
+ggsave("population.png")
 
-# Plot the graph (in %)
-preventive_tab <- with(sample, table(status, preventive, useNA = "ifany"))         ## Construct frequency table
-preventive_tab <- as.data.frame.matrix(prop.table(preventive_tab, margin = 1))
-preventive_tab$status <- c("Uninsured", "RNCMS", "UEBMI", "URBMI")
-preventive_tab$status <- factor(preventive_tab$status,                             ## Reorder insurance status for the plot
+# Use of preventive care by insurance status (2011-2015)
+
+## Construct frequency tables
+
+preventive_tab_2011 <- with(sample[sample$wave == 2011, ], table(status, preventive, useNA = "ifany")) 
+preventive_tab_2011 <- as.data.frame.matrix(prop.table(preventive_tab_2011, margin = 1))
+preventive_tab_2015 <- with(sample[sample$wave == 2015, ], table(status, preventive, useNA = "ifany")) 
+preventive_tab_2015 <- as.data.frame.matrix(prop.table(preventive_tab_2015, margin = 1))
+
+## Clean the tables
+preventive_tab_2011$wave <- 2011
+preventive_tab_2011 <- preventive_tab_2011[, names(preventive_tab_2011) != "0"]
+preventive_tab_2015$wave <- 2015
+preventive_tab_2015 <- preventive_tab_2015[, names(preventive_tab_2015) != "0"]
+
+## Combine two tables and prepare for the plot
+preventive_tab <- rbind(preventive_tab_2015, preventive_tab_2011)
+names(preventive_tab)[names(preventive_tab) == "1"] <- "preventive"
+preventive_tab$status <- rep(c("Uninsured", "RNCMS", "UEBMI", "URBMI"),2)
+preventive_tab$status <- factor(preventive_tab$status,                      ## Reorder insurance status for the plot
                                 levels = c("Uninsured", "RNCMS", "UEBMI", "URBMI"))
 names(preventive_tab)[names(preventive_tab) == "1"] <- "preventive"
-status_pct_plot <- ggplot(preventive_tab,aes(x = status, y = preventive)) + 
-  geom_bar(stat="identity", fill= "#56B4E9", width = 0.5) +
+preventive_tab$wave <- factor(preventive_tab$wave,                          ## Factorise wave for the plot
+                              levels = c("2011", "2015"))
+
+## Plot the graph
+status_pct_plot <- ggplot() + 
+  geom_bar(aes(x = status, y = preventive, fill = wave), data = preventive_tab, stat = "identity", width = 0.5, 
+           position_dodge()) +
   theme(panel.background = element_blank(),
         panel.grid = element_blank(),
         panel.grid.major.y = element_line(size=.1, color="lightgrey"),
         axis.ticks = element_blank()) +
   labs(x = "", y = "") + scale_y_continuous(labels = percent)
 ggsave("status by pct.png")
-write.csv(preventive_tab, "Use of preventive care.csv")
-
-# Turn preventive into a factor
-sample$preventive <- factor(sample$preventive,
-                            labels = c("Not used preventive care", "Used preventive care"))
-
-# Frequency table of insurance status                                      
-status_tab <- table(sample$status, dnn = c("Insurance plan status"), useNA = "ifany")
-status_tab_prop <- round(prop.table(status_tab), digits = 2)    ## Turn into a proportion table
-write.csv(status_tab, "Insurance status.csv")                   ## Save the table for output in the paper
 #----------------------------------#
 
 # DESCRIPTIVE STATISTICS OF THE SAMPLE AND SUB-SAMPLES #

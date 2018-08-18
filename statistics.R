@@ -32,15 +32,17 @@ if (!require(ggplot2)) {
 library(plyr)
 library(scales)
 
-# Load the library to calculate statistics of income-related variables
-library(moments)
+# Install pacakges to describe distribution
+if (!require(moments)) {        
+  install.packages("moments")
+  library(moments)
+}
 #----------------------------------#
 
 # PLOT GRAPHS #
 
 # Population breakdown by insurance status
 
-sample$wave <- factor(sample$wave, levels = c("2011", "2015")) ## Turn wave variable into a factor variable
 sample$status <- relevel(sample$status, "Uninsured")           ## Reorder the levels of the factor variable
 population <- ggplot(sample, aes(x = status, fill = wave)) + 
   geom_bar(width = 0.5, position = "dodge") +
@@ -216,12 +218,6 @@ write.csv(summary, "Summary statistics.csv")
 #----------------------------------#
 
 # EXPLORE THE DISTRIBUTION OF HOUSEHOLD NET INCOME PER CAPITA AND AGE
-
-# Install pacakges to describe distribution
-if (!require(moments)) {        
-  install.packages("moments")
-  library(moments)
-}
 
 # Plot the distirbution of hhnetinc_pc
 dist_inc <- ggplot(moral, aes(x = hhnetinc_pc, fill = wave)) + 

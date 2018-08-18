@@ -31,6 +31,9 @@ if (!require(ggplot2)) {
 # Load the libraries to create frequency tables and scales for plots
 library(plyr)
 library(scales)
+
+# Load the library to calculate statistics of income-related variables
+library(moments)
 #----------------------------------#
 
 # PLOT GRAPHS #
@@ -221,26 +224,36 @@ if (!require(moments)) {
 }
 
 # Plot the distirbution of hhnetinc_pc
-dist_inc <- ggplot(sample, aes(x = hhnetinc_pc)) + geom_histogram(fill = "#56B4E9", binwidth = 5000) 
+dist_inc <- ggplot(moral, aes(x = hhnetinc_pc, fill = wave)) + 
+  geom_histogram(bins = 50, position = "identity", alpha = 0.5) + xlim(0, 150000) +
+  labs(x = "Income level", y = "Number of respondents") 
 dist_inc <- dist_inc + theme(panel.background = element_blank(),
                              panel.grid = element_blank(),
-                             panel.grid.major.y = element_line(size=.1, color="grey"),
-                             axis.ticks = element_blank()) + 
-  labs(x = "", y = "")               
-ggsave("Distribution of income.png") 
+                             panel.grid.major.y = element_line(size=.1, color="lightgrey"),
+                             axis.ticks = element_blank(),
+                             axis.text = element_text(size=10),
+                             axis.title = element_text(size=10, color = "black"),
+                             legend.title = element_text(size=10),
+                             legend.text = element_text(size=10))
+ggsave("Distribution of income 2011 & 2015.png") 
+
 
 # Plot the distribution of log income
-dist_loginc <- ggplot(sample, aes(x = loginc)) + geom_histogram(fill = "#56B4E9", binwidth = 0.2) 
+dist_loginc <- ggplot(moral, aes(x = loginc, fill = wave)) + 
+  geom_histogram(bins = 50, position = "identity", alpha = 0.5) +
+  labs(x = "Log of income level", y = "Number of respondents") 
 dist_loginc <- dist_loginc + theme(panel.background = element_blank(),
-                                   panel.grid = element_blank(),
-                                   panel.grid.major.y = element_line(size=.1, color="grey"),
-                                   axis.ticks = element_blank()) +  
-  labs(x = "", y = "")               
-
-ggsave("Distribution of log income.png") 
+                             panel.grid = element_blank(),
+                             panel.grid.major.y = element_line(size=.1, color="lightgrey"),
+                             axis.ticks = element_blank(),
+                             axis.text = element_text(size=10),
+                             axis.title = element_text(size=10, color = "black"),
+                             legend.title = element_text(size=10),
+                             legend.text = element_text(size=10))              
+ggsave("Distribution of log income 2011 & 2015.png") 
 
 # Plot distribution of age
-dist_age <- ggplot(sample, aes(x = age)) + geom_histogram(fill = "#56B4E9", binwidth = 2) 
+dist_age <- ggplot(moral, aes(x = age)) + geom_histogram(fill = "#56B4E9", binwidth = 2) 
 dist_age <- dist_age + theme(panel.background = element_blank(),
                              panel.grid = element_blank(),
                              panel.grid.major.y = element_line(size=.1, color="lightgrey"),
@@ -249,10 +262,10 @@ dist_age <- dist_age + theme(panel.background = element_blank(),
 ggsave("Distribution of age.png") 
 
 # Calculate skewness, kurtosis, mean and median of the distribution of the two income-related variables and age
-skewness <- sapply(sample[, c("hhnetinc_pc", "loginc", "age")], function(x) round(skewness(x), digits = 4))
-kurtosis <- sapply(sample[, c("hhnetinc_pc", "loginc", "age")], function(x) round(kurtosis(x), digits = 4))
-mean <- sapply(sample[, c("hhnetinc_pc", "loginc", "age")], function(x) round(mean(x), digits = 4))
-median <- sapply(sample[, c("hhnetinc_pc", "loginc", "age")], function(x) round(median(x), digits = 4))
+skewness <- sapply(moral[, c("hhnetinc_pc", "loginc", "age")], function(x) round(skewness(x), digits = 4))
+kurtosis <- sapply(moral[, c("hhnetinc_pc", "loginc", "age")], function(x) round(kurtosis(x), digits = 4))
+mean <- sapply(moral[, c("hhnetinc_pc", "loginc", "age")], function(x) round(mean(x), digits = 4))
+median <- sapply(moral[, c("hhnetinc_pc", "loginc", "age")], function(x) round(median(x), digits = 4))
 statistics <- rbind(mean, median, skewness, kurtosis)
 statistics <- as.data.frame.matrix(statistics)
 colnames(statistics) <- c("Household net income per capita", "Log household net income per capita", "Age (in years)")

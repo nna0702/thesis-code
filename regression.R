@@ -36,7 +36,6 @@ if (!require(stargazer)) {
   install.packages("stargazer")
   library(stargazer)
 }
-#----------------------------------#
 
 # Set directory for output
 setwd(PathOut)
@@ -45,7 +44,7 @@ setwd(PathOut)
 moral <- subset(moral, select = - c(hhnetinc_pc, status, idind, uebmi, urbmi, status, rncms))
 #----------------------------------#
 
-# GENERATE ADDITIONAL VARIABLES FOR THE REGRESSION
+# GENERATE ADDITIONAL VARIABLES FOR THE REGRESSION #
 
 # Create dummy variales for 2015
 moral$wave_2015 <- ifelse(moral$wave == 2015, 1, 0)
@@ -90,22 +89,6 @@ unrestricted <- moral[, names(moral) %in% unrestricted]
 restricted <- union(setdiff(setdiff(names(moral), "wave"), 
                             names(moral)[grep("_2015",names(moral))]), "wave_2015") ## RHS variables in restricted model
 restricted <- moral[, names(moral) %in% restricted]
-#----------------------------------#
-
-# LINEAR REGRESSION MODEL #
-
-# Restricted model
-linregr <- lm(preventive ~ ., data = restricted)
-summary(linregr)
-write.csv(tidy(linregr), "Linear regression restricted model.csv")
-
-# Unrestricted model
-linregu <- lm(preventive ~ ., data = unrestricted)
-summary(linregu)
-write.csv(tidy(linregu), "Linear regression unrestricted model.csv")
-
-# Likelihood ratio test
-lrtest(linregr, linregu)
 
 #----------------------------------#
 
@@ -167,5 +150,33 @@ write.csv(contingency, "Contingency predicted vs actual of unrestricted model.cs
 
 # LIKELIHOOD RATIO TEST FOR LOGREG MODELS #
 lrtest(logregr, logregu)
+#----------------------------------#
 
-###### TODO: Add excel files with Latex command of the results
+# LINEAR REGRESSION MODEL #
+
+# Restricted model
+linregr <- lm(preventive ~ ., data = restricted)
+summary(linregr)
+write.csv(tidy(linregr), "Linear regression restricted model.csv")
+
+# Unrestricted model
+linregu <- lm(preventive ~ ., data = unrestricted)
+summary(linregu)
+write.csv(tidy(linregu), "Linear regression unrestricted model.csv")
+
+# Likelihood ratio test
+lrtest(linregr, linregu)
+#----------------------------------#
+
+# EXPORT RESULTS #
+
+# Latex table of the regression results
+latex <- stargazer(logregr, linregr, logregu, title = "Full regression results",
+                   align = TRUE, dep.var.labels = "Use of preventive care",
+                   no.space = TRUE)
+write.csv(latex, "latex.csv")
+#----------------------------------#
+
+# REFERENCE (required by the author) #
+
+# Hlavac, Marek (2018). stargazer: Well-Formatted Regression and Summary Statistics Tables. R package version 5.2.1. https://CRAN.R-project.org/package=stargazer

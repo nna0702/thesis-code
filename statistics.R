@@ -49,8 +49,11 @@ population <- ggplot(sample, aes(x = status, fill = wave)) +
   theme(panel.background = element_blank(),
         panel.grid = element_blank(),
         panel.grid.major.y = element_line(size=.1, color="lightgrey"),
-        axis.ticks = element_blank()) +
-  labs(x = "", y = "", fill = "Wave")
+        axis.ticks = element_blank(),
+        axis.text = element_text(size = 10, color = "black"),
+        axis.title = element_text(size = 10),
+        legend.title = element_text(size = 10)) +
+  labs(x = "Insurance group", y = "Number of respondents", fill = "Wave")
 ggsave("population.png")
 
 # Use of preventive care by insurance status (2011-2015)
@@ -85,8 +88,10 @@ status_pct_plot <- ggplot() +
   theme(panel.background = element_blank(),
         panel.grid = element_blank(),
         panel.grid.major.y = element_line(size=.1, color="lightgrey"),
-        axis.ticks = element_blank()) +
-  labs(x = "", y = "") + scale_y_continuous(labels = percent)
+        axis.ticks = element_blank(),
+        axis.text = element_text(size = 10, color = "black"),
+        axis.title = element_text(size= 10)) +
+  labs(x = "Insurance group", y = "Proportion of respondents", fill = "Wave") + scale_y_continuous(labels = percent)
 ggsave("status by pct.png")
 #----------------------------------#
 
@@ -213,15 +218,6 @@ dist_loginc <- dist_loginc + theme(panel.background = element_blank(),
                              legend.title = element_text(size=10),
                              legend.text = element_text(size=10))              
 ggsave("Distribution of log income 2011 & 2015.png") 
-
-# Plot distribution of age
-dist_age <- ggplot(moral, aes(x = age)) + geom_histogram(fill = "#56B4E9", binwidth = 2) 
-dist_age <- dist_age + theme(panel.background = element_blank(),
-                             panel.grid = element_blank(),
-                             panel.grid.major.y = element_line(size=.1, color="lightgrey"),
-                             axis.ticks = element_blank()) +  
-  labs(x = "", y = "") 
-ggsave("Distribution of age.png") 
 
 # Calculate skewness, kurtosis, mean and median of the distribution of the two income-related variables and age
 

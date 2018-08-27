@@ -148,8 +148,22 @@ contingency <- with(unrestricted, table(predict, preventive, dnn = c("Predicted"
 write.csv(contingency, "Contingency predicted vs actual of unrestricted model.csv")
 #----------------------------------#
 
-# LIKELIHOOD RATIO TEST FOR LOGREG MODELS #
+# TESTS FOR MODEL SELECTION #
+
+# Likelihood ratio test
 lrtest(logregr, logregu)
+
+# Alkaike Information Criterion
+AICu <- AIC(logregu)
+AICr <- AIC(logregr)
+
+# Schawrz's Bayesian Information Criterion
+BICu <- BIC(logregu)
+BICr <- BIC(logregr)
+
+# Export test results
+selection <- data.frame(Model = c("Unrestricted", "Restricted"), AIC = c(AICu, AICr), BIC = c(BICu, BICr))
+write.csv(selection, "Model selection.csv")
 #----------------------------------#
 
 # LINEAR REGRESSION MODEL #
@@ -168,7 +182,7 @@ write.csv(tidy(linregu), "Linear regression unrestricted model.csv")
 lrtest(linregr, linregu)
 #----------------------------------#
 
-# EXPORT RESULTS #
+# EXPORT REGRESSION RESULTS #
 
 # Latex table of the regression results
 latex <- stargazer(logregr, linregr, logregu, title = "Full regression results",

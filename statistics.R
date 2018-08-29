@@ -80,6 +80,7 @@ preventive_tab$status <- factor(preventive_tab$status,                      ## R
 names(preventive_tab)[names(preventive_tab) == "1"] <- "preventive"
 preventive_tab$wave <- factor(preventive_tab$wave,                          ## Factorise wave for the plot
                               levels = c("2011", "2015"))
+write.csv(preventive_tab, "Use of preventive care.csv")
 
 ## Plot the graph
 status_pct_plot <- ggplot() + 
@@ -127,7 +128,7 @@ mean_2011 <- as.data.frame(mean_2011)
 mean_2011[[2]] <- round(mean_2011[[2]]/NROW(dflist[[2]]), digits = 2)
 names(mean_2011) <- c("Variable", "2011")
 
-# Summary statistics of factor variables for 2011 sample
+# Summary statistics of factor variables for 2015 sample
 mean_2015 <- list()
 for (i in 1:length(factors)) {
   mean_2015[[i]] <- as.data.frame(count(dflist[[3]][[factors[[i]]]]))
@@ -226,22 +227,22 @@ moral11 <- moral[moral$wave == 2011, ]
 moral15 <- moral[moral$wave == 2015, ]
 
 ## Statistics in 2011
-skewness <- sapply(moral11[, c("hhnetinc_pc", "loginc", "age")], function(x) round(skewness(x), digits = 4))
-kurtosis <- sapply(moral11[, c("hhnetinc_pc", "loginc", "age")], function(x) round(kurtosis(x), digits = 4))
-mean <- sapply(moral11[, c("hhnetinc_pc", "loginc", "age")], function(x) round(mean(x), digits = 4))
-median <- sapply(moral11[, c("hhnetinc_pc", "loginc", "age")], function(x) round(median(x), digits = 4))
+skewness <- sapply(moral11[, c("hhnetinc_pc", "loginc")], function(x) round(skewness(x), digits = 4))
+kurtosis <- sapply(moral11[, c("hhnetinc_pc", "loginc")], function(x) round(kurtosis(x), digits = 4))
+mean <- sapply(moral11[, c("hhnetinc_pc", "loginc")], function(x) round(mean(x), digits = 4))
+median <- sapply(moral11[, c("hhnetinc_pc", "loginc")], function(x) round(median(x), digits = 4))
 statistics <- rbind(mean, median, skewness, kurtosis)
 statistics <- as.data.frame.matrix(statistics)
-colnames(statistics) <- c("Household net income per capita", "Log household net income per capita", "Age (in years)")
-write.csv(statistics, "Statistics of income variables and age 2011.csv")
+colnames(statistics) <- c("Household net income per capita", "Log household net income per capita")
+write.csv(statistics, "Statistics of income variables 2011.csv")
 
 ## Statistics in 2015
-skewness <- sapply(moral15[, c("hhnetinc_pc", "loginc", "age")], function(x) round(skewness(x), digits = 4))
-kurtosis <- sapply(moral15[, c("hhnetinc_pc", "loginc", "age")], function(x) round(kurtosis(x), digits = 4))
-mean <- sapply(moral15[, c("hhnetinc_pc", "loginc", "age")], function(x) round(mean(x), digits = 4))
-median <- sapply(moral15[, c("hhnetinc_pc", "loginc", "age")], function(x) round(median(x), digits = 4))
+skewness <- sapply(moral15[, c("hhnetinc_pc", "loginc")], function(x) round(skewness(x), digits = 4))
+kurtosis <- sapply(moral15[, c("hhnetinc_pc", "loginc")], function(x) round(kurtosis(x), digits = 4))
+mean <- sapply(moral15[, c("hhnetinc_pc", "loginc")], function(x) round(mean(x), digits = 4))
+median <- sapply(moral15[, c("hhnetinc_pc", "loginc")], function(x) round(median(x), digits = 4))
 statistics <- rbind(mean, median, skewness, kurtosis)
 statistics <- as.data.frame.matrix(statistics)
-colnames(statistics) <- c("Household net income per capita", "Log household net income per capita", "Age (in years)")
-write.csv(statistics, "Statistics of income variables and age 2015.csv")
+colnames(statistics) <- c("Household net income per capita", "Log household net income per capita")
+write.csv(statistics, "Statistics of income variables 2015.csv")
 #----------------------------------#

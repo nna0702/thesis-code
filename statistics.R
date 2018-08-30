@@ -94,6 +94,29 @@ status_pct_plot <- ggplot() +
         axis.title = element_text(size= 10)) +
   labs(x = "Insurance group", y = "Proportion of respondents", fill = "Wave") + scale_y_continuous(labels = percent)
 ggsave("status by pct.png")
+
+# Use of preventive care within RNCMS group
+
+## Construct the table
+preventive_rncms <- with(moral, table(wave, preventive, useNA = "ifany"))
+preventive_rncms <- as.data.frame.matrix(prop.table(preventive_rncms, margin = 1))
+preventive_rncms$wave <- c("2011", "2015")
+preventive_rncms$wave <- factor(preventive_rncms$wave, 
+                                levels = c("2011", "2015"))
+names(preventive_rncms)[names(preventive_rncms) == "1"] <- "preventive"
+
+## Plot the graph
+rncms_plot <- ggplot(preventive_rncms,aes(x = wave, y = preventive)) + 
+  geom_bar(stat="identity", fill= "#56B4E9", width = 0.5) +
+  theme(panel.background = element_blank(),
+        panel.grid = element_blank(),
+        panel.grid.major.y = element_line(size=.1, color="lightgrey"),
+        axis.ticks = element_blank(),
+        axis.text = element_text(size = 10, color = "black"),
+        axis.title = element_text(size = 10, color = "black")) +
+  labs(x = "Survey wave", y = "Proportion of respondents") + scale_y_continuous(labels = percent)
+ggsave("rncms plot.png")
+write.csv(preventive_rncms, "Use of preventive care by RNCMS group.csv")
 #----------------------------------#
 
 # DESCRIPTIVE STATISTICS OF THE SAMPLE AND SUB-SAMPLES #

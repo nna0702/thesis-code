@@ -126,26 +126,6 @@ write.csv(contingency, "Contingency predicted vs actual of restricted model.csv"
 logregu <- glm(preventive ~ ., family = "binomial", data = unrestricted)
 summary(logregu)
 write.csv(tidy(logregu), "Logistic regression unrestricted model.csv")
-
-# Odds ratio
-or <- round(exp(coef(logregu)), digits = 3)
-write.csv(or, "Odds ratio of unrestricted model.csv")
-
-# Average marginal effect
-ameu <- logitmfx(preventive ~., atmean = FALSE, data = unrestricted)
-ameu
-
-# Marginal effect at means
-memu <- logitmfx(preventive ~., atmean = TRUE, data = unrestricted)
-memu
-
-# Prediction
-prop <- NROW(unrestricted[unrestricted$preventive == 1, ]) / NROW(unrestricted) ## Set the threshold
-predict <- predict.glm(logregu, type = "response")
-unrestricted[ , "predict"] <- predict
-unrestricted$predict <- ifelse(unrestricted$predict >= prop, 1, 0)
-contingency <- with(unrestricted, table(predict, preventive, dnn = c("Predicted", "Actual")))
-write.csv(contingency, "Contingency predicted vs actual of unrestricted model.csv")
 #----------------------------------#
 
 # TESTS FOR MODEL SELECTION #
@@ -172,14 +152,6 @@ write.csv(selection, "Model selection.csv")
 linregr <- lm(preventive ~ ., data = restricted)
 summary(linregr)
 write.csv(tidy(linregr), "Linear regression restricted model.csv")
-
-# Unrestricted model
-linregu <- lm(preventive ~ ., data = unrestricted)
-summary(linregu)
-write.csv(tidy(linregu), "Linear regression unrestricted model.csv")
-
-# Likelihood ratio test
-lrtest(linregr, linregu)
 #----------------------------------#
 
 # EXPORT REGRESSION RESULTS #

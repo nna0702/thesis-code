@@ -173,7 +173,13 @@ df$na <- rowSums(is.na(df[, variables]))
 sample <- subset(df[, variables], df$na == 0) 
 #----------------------------------#
 
-# SAMPLE FOR MAIN ANALYSIS #
+# Select the sample for descriptive analysis
+
+sample <- sample[duplicated(sample$idind) | duplicated(sample$idind, fromLast = TRUE),]
+stopifnot(NROW(sample[sample$wave == 2011, ]) == NROW(sample[sample$wave == 2015, ]))  ## Cross check
+#----------------------------------#
+
+# Select the sample for descriptive analysis and regression analysis to identify moral hazard
 
 ## Retain those with RNCMS
 moral <- sample[sample$status == "RNCMS",]

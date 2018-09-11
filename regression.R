@@ -149,6 +149,7 @@ write.csv(selection, "Model selection.csv")
 # LINEAR REGRESSION MODEL #
 
 # Restricted model
+restricted <- restricted[, setdiff(names(restricted), "predict")]
 linregr <- lm(preventive ~ ., data = restricted)
 summary(linregr)
 write.csv(tidy(linregr), "Linear regression restricted model.csv")

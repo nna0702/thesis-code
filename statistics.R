@@ -48,7 +48,7 @@ population <- ggplot(sample, aes(x = status, fill = wave)) +
   geom_bar(width = 0.5, position = "dodge") +
   theme(panel.background = element_blank(),
         panel.grid = element_blank(),
-        panel.grid.major.y = element_line(size=.1, color="lightgrey"),
+        panel.grid.major.y = element_line(size=.2, color="lightgrey"),
         axis.ticks = element_blank(),
         axis.text = element_text(size = 10, color = "black"),
         axis.title = element_text(size = 10),
@@ -88,7 +88,7 @@ status_pct_plot <- ggplot() +
            position_dodge()) +
   theme(panel.background = element_blank(),
         panel.grid = element_blank(),
-        panel.grid.major.y = element_line(size=.1, color="lightgrey"),
+        panel.grid.major.y = element_line(size=.2, color="lightgrey"),
         axis.ticks = element_blank(),
         axis.text = element_text(size = 10, color = "black"),
         axis.title = element_text(size= 10)) +
@@ -99,22 +99,24 @@ ggsave("status by pct.png")
 
 ## Construct the table
 preventive_rncms <- with(moral, table(wave, preventive, useNA = "ifany"))
+preventive_rncms <- rbind(preventive_rncms, colSums(preventive_rncms))
 preventive_rncms <- as.data.frame.matrix(prop.table(preventive_rncms, margin = 1))
-preventive_rncms$wave <- c("2011", "2015")
+preventive_rncms$wave <- c("Full sample", "Wave 2011", "Wave 2015")
 preventive_rncms$wave <- factor(preventive_rncms$wave, 
-                                levels = c("2011", "2015"))
+                                levels = c("Full sample", "Wave 2011", "Wave 2015"))
 names(preventive_rncms)[names(preventive_rncms) == "1"] <- "preventive"
+preventive_rncms <- preventive_rncms[c(3,1,2),]
 
 ## Plot the graph
 rncms_plot <- ggplot(preventive_rncms,aes(x = wave, y = preventive)) + 
   geom_bar(stat="identity", fill= "#56B4E9", width = 0.5) +
   theme(panel.background = element_blank(),
         panel.grid = element_blank(),
-        panel.grid.major.y = element_line(size=.1, color="lightgrey"),
+        panel.grid.major.y = element_line(size=.2, color="lightgrey"),
         axis.ticks = element_blank(),
         axis.text = element_text(size = 10, color = "black"),
         axis.title = element_text(size = 10, color = "black")) +
-  labs(x = "Survey wave", y = "Proportion of respondents") + scale_y_continuous(labels = percent)
+  labs(x = "Sample", y = "Proportion of respondents") + scale_y_continuous(labels = percent)
 ggsave("rncms plot.png")
 write.csv(preventive_rncms, "Use of preventive care by RNCMS group.csv")
 #----------------------------------#

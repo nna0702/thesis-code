@@ -104,12 +104,16 @@ or <- round(exp(coef(logregr)), digits = 3)
 write.csv(or, "Odds ratio of restricted model.csv")
 
 # Average marginal effect
+sink("Average marginal effect.txt")
 amer <- logitmfx(preventive ~., atmean = FALSE, data = restricted)
 amer
+sink()
 
 # Marginal effect at means
+sink("Marginal effect at means.txt")
 memr <- logitmfx(preventive ~., atmean = TRUE, data = restricted)
 memr
+sink()
 
 # Prediction
 prop <- NROW(restricted[restricted$preventive == 1, ]) / NROW(restricted) ## Set the threshold

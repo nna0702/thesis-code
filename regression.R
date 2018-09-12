@@ -162,7 +162,7 @@ write.csv(tidy(linregr), "Linear regression restricted model.csv")
 # EXPORT REGRESSION RESULTS #
 
 # Latex table of the regression results
-latex <- stargazer(logregr, linregr, logregu, title = "Full regression results",
+latex <- stargazer(logregr, logregr, logregr, logregr, linregr, logregu, title = "Full regression results",
                    align = TRUE, dep.var.labels = "Use of preventive care",
                    no.space = TRUE)
 write.csv(latex, "latex.csv")

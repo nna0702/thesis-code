@@ -222,7 +222,7 @@ dist_inc <- ggplot(moral, aes(x = hhnetinc_pc, fill = wave)) +
   labs(x = "Income level", y = "Number of respondents") 
 dist_inc <- dist_inc + theme(panel.background = element_blank(),
                              panel.grid = element_blank(),
-                             panel.grid.major.y = element_line(size=.3, color="lightgrey"),
+                             panel.grid.major.y = element_line(size=.5, color="lightgrey"),
                              axis.ticks = element_blank(),
                              axis.text = element_text(size=10),
                              axis.title = element_text(size=10, color = "black"),
@@ -237,7 +237,7 @@ dist_loginc <- ggplot(moral, aes(x = loginc, fill = wave)) +
   labs(x = "Log of income level", y = "Number of respondents") 
 dist_loginc <- dist_loginc + theme(panel.background = element_blank(),
                              panel.grid = element_blank(),
-                             panel.grid.major.y = element_line(size=.3, color="lightgrey"),
+                             panel.grid.major.y = element_line(size=.5, color="lightgrey"),
                              axis.ticks = element_blank(),
                              axis.text = element_text(size=10),
                              axis.title = element_text(size=10, color = "black"),

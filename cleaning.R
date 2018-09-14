@@ -72,11 +72,12 @@ data15 <- data[data$wave == 2015, ]            ## Extract the data in wave 2015
 
 ## Wave 2011
 data11 <- data11[(!duplicated(data11$idind)),] ## Remove duplicates in wave 2011
-data <- rbind(data11, data15)                  ## Combine 2011 and 2015 datasets with unique values
 
 ## Wave 2015
 data15 <- data15[(!duplicated(data15$idind)),] ## Remove duplicates in wave 2015
-data <- rbind(data11, data15)                  ## Combine 2011 and 2015 datasets with unique values
+
+## Combine 2011 and 2015 datasets with unique values
+data <- rbind(data11, data15)                  
 
 ## Double check uniqueness in each wave
 stopifnot(length(unique(data[data$wave == 2011, ]$idind)) == NROW(data[data$wave == 2011, ]))

@@ -101,7 +101,7 @@ ggsave("status by pct.png")
 preventive_rncms <- with(moral, table(wave, preventive, useNA = "ifany"))
 preventive_rncms <- rbind(preventive_rncms, colSums(preventive_rncms))
 preventive_rncms <- as.data.frame.matrix(prop.table(preventive_rncms, margin = 1))
-preventive_rncms$wave <- c("Full sample", "Wave 2011", "Wave 2015")
+preventive_rncms$wave <- c("Wave 2011", "Wave 2015", "Full sample")
 preventive_rncms$wave <- factor(preventive_rncms$wave, 
                                 levels = c("Full sample", "Wave 2011", "Wave 2015"))
 names(preventive_rncms)[names(preventive_rncms) == "1"] <- "preventive"

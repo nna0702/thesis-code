@@ -56,44 +56,9 @@ population <- ggplot(sample, aes(x = status, fill = wave)) +
   labs(x = "Insurance group", y = "Number of respondents", fill = "Wave")
 ggsave("population.png")
 
-# Use of preventive care by insurance status (2011-2015)
-
-## Construct frequency tables
-
-preventive_tab_2011 <- with(sample[sample$wave == 2011, ], table(status, preventive, useNA = "ifany")) 
-preventive_tab_2011 <- as.data.frame.matrix(prop.table(preventive_tab_2011, margin = 1))
-preventive_tab_2015 <- with(sample[sample$wave == 2015, ], table(status, preventive, useNA = "ifany")) 
-preventive_tab_2015 <- as.data.frame.matrix(prop.table(preventive_tab_2015, margin = 1))
-
-## Clean the tables
-preventive_tab_2011$wave <- 2011
-preventive_tab_2011 <- preventive_tab_2011[, names(preventive_tab_2011) != "0"]
-preventive_tab_2015$wave <- 2015
-preventive_tab_2015 <- preventive_tab_2015[, names(preventive_tab_2015) != "0"]
-
-## Combine two tables and prepare for the plot
-preventive_tab <- rbind(preventive_tab_2015, preventive_tab_2011)
-names(preventive_tab)[names(preventive_tab) == "1"] <- "preventive"
-preventive_tab$status <- rep(c("Uninsured", "RNCMS", "UEBMI", "URBMI"),2)
-preventive_tab$status <- factor(preventive_tab$status,                      ## Reorder insurance status for the plot
-                                levels = c("Uninsured", "RNCMS", "UEBMI", "URBMI"))
-names(preventive_tab)[names(preventive_tab) == "1"] <- "preventive"
-preventive_tab$wave <- factor(preventive_tab$wave,                          ## Factorise wave for the plot
-                              levels = c("2011", "2015"))
-write.csv(preventive_tab, "Use of preventive care.csv")
-
-## Plot the graph
-status_pct_plot <- ggplot() + 
-  geom_bar(aes(x = status, y = preventive, fill = wave), data = preventive_tab, stat = "identity", width = 0.5, 
-           position_dodge()) +
-  theme(panel.background = element_blank(),
-        panel.grid = element_blank(),
-        panel.grid.major.y = element_line(size=.3, color="lightgrey"),
-        axis.ticks = element_blank(),
-        axis.text = element_text(size = 10, color = "black"),
-        axis.title = element_text(size= 10)) +
-  labs(x = "Insurance group", y = "Proportion of respondents", fill = "Wave") + scale_y_continuous(labels = percent)
-ggsave("status by pct.png")
+population_tab <- with(sample, table(wave, status, useNA = "ifany"))
+population_tab <- as.data.frame.matrix(prop.table(population_tab, margin = 1))
+write.csv(population_tab, "Proportion of respondents by insurance status.csv")
 
 # Use of preventive care within RNCMS group
 

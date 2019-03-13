@@ -1,4 +1,4 @@
-# README: This script merges raw data files into a master and select matched observations for waves 2011 & 2015
+# README: This script defines the variables used for further analysis
 
 # Settings
 
